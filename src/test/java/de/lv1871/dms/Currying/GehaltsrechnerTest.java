@@ -1,6 +1,11 @@
 package de.lv1871.dms.Currying;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
+
+import de.lv1871.dms.Currying.domain.Gehaltsrechner;
+import de.lv1871.dms.Currying.domain.Gehaltsregeln;
 
 public class GehaltsrechnerTest {
 
@@ -35,7 +40,17 @@ public class GehaltsrechnerTest {
 	// @formatter:on
 	@Test
 	public void testGehaltsberechnungA() {
+		// @formatter:off
+		Double gehalt = Gehaltsrechner
+			.create()
+			.with(Gehaltsregeln.ZULAGE_ADDIEREN)
+			.with(Gehaltsregeln.BONUS.curry().apply(54.0))
+			.with(Gehaltsregeln.STANDARD_STEUERSATZ_ABZIEHEN)
+			.with(Gehaltsregeln.VORGESETZTEN_SPECIAL.curry().apply(Gehaltsregeln.SUBTRACT).curry().apply(23.0))
+			.berechne(2300.0);
+		// @formatter:on
 
+		assertEquals(new Double(1106.76), gehalt);
 	}
 
 	// @formatter:off
@@ -49,7 +64,16 @@ public class GehaltsrechnerTest {
 	// @formatter:on
 	@Test
 	public void testGehaltsberechnungB() {
+		// @formatter:off
+		Double gehalt = Gehaltsrechner
+			.create()
+			.with(Gehaltsregeln.ZULAGE_ADDIEREN)
+			.with(Gehaltsregeln.STANDARD_STEUERSATZ_ABZIEHEN)
+			.with(Gehaltsregeln.STEUERSATZ_ABZIEHEN.curry().apply(0.01))
+			.berechne(2120.0);
+		// @formatter:on
 
+		assertEquals(new Double(1011.9), gehalt);
 	}
 
 	// @formatter:off
@@ -64,7 +88,18 @@ public class GehaltsrechnerTest {
 	// @formatter:on
 	@Test
 	public void testGehaltsberechnungC() {
+		// @formatter:off
+		Double gehalt = Gehaltsrechner
+			.create()
+			.with(Gehaltsregeln.ZULAGE_ADDIEREN)
+			.with(Gehaltsregeln.BONUS.curry().apply(102.0))
+			.with(Gehaltsregeln.STANDARD_STEUERSATZ_ABZIEHEN)
+			.with(Gehaltsregeln.STEUERSATZ_ABZIEHEN.curry().apply(0.12))
+			.with(Gehaltsregeln.VORGESETZTEN_SPECIAL.curry().apply(Gehaltsregeln.SUM).curry().apply(233.0))
+			.berechne(1020.0);
+		// @formatter:on
 
+		assertEquals(new Double(728.48), gehalt);
 	}
 
 	// @formatter:off
@@ -79,7 +114,21 @@ public class GehaltsrechnerTest {
 	// @formatter:on
 	@Test
 	public void testGehaltsberechnungCMitAssertionNachErsterDritterUndLetzterRegel() {
+		// @formatter:off
+		Gehaltsrechner gehaltsrechnerKonfiguriert = Gehaltsrechner
+			.create()
+			.with(Gehaltsregeln.ZULAGE_ADDIEREN)
+			.with(Gehaltsregeln.BONUS.curry().apply(102.0))
+			.with(Gehaltsregeln.STANDARD_STEUERSATZ_ABZIEHEN)
+			.with(Gehaltsregeln.STEUERSATZ_ABZIEHEN.curry().apply(0.12))
+			.with(Gehaltsregeln.VORGESETZTEN_SPECIAL.curry().apply(Gehaltsregeln.SUM).curry().apply(233.0));
+		// @formatter:on
 
+		Double gehaltNachRegelDrei = gehaltsrechnerKonfiguriert.withLimit(3).berechne(1020.0);
+		Double gehaltNachRegelAlle = gehaltsrechnerKonfiguriert.withLimit(null).berechne(1020.0);
+
+		assertEquals(new Double(563.04), gehaltNachRegelDrei);
+		assertEquals(new Double(728.48), gehaltNachRegelAlle);
 	}
 
 	// @formatter:off
@@ -95,7 +144,19 @@ public class GehaltsrechnerTest {
 	// @formatter:on
 	@Test
 	public void testGehaltsberechnungDSonderlocke() {
+		// @formatter:off
+		ExtendedFunction<Double, Double, Double> MULTIPLY = (a, b) -> a * b;
+		
+		Double gehalt = Gehaltsrechner
+			.create()
+			.with(MULTIPLY.curry().apply(3.0))
+			.with(Gehaltsregeln.ZULAGE_ADDIEREN)
+			.with(Gehaltsregeln.STANDARD_STEUERSATZ_ABZIEHEN)
+			.with(Gehaltsregeln.STEUERSATZ_ABZIEHEN.curry().apply(0.12))
+			.berechne(1020.0);
+		// @formatter:on
 
+		assertEquals(new Double(1279.98), gehalt);
 	}
 
 }

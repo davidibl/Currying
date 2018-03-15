@@ -27,11 +27,12 @@ public class VersicherungenCurryTest {
 		versicherungen.add(new Versicherung(23));
 		versicherungen.add(new Versicherung(46));
 
-		Function<Versicherung, Integer> toBeitrag = null;
+		Function<Versicherung, Integer> toBeitrag = VersicherungFunction.beitragsrechnung.curry()
+				.apply(versicherungen.size());
 
-		// formatter:off
+		// @formatter:off
 		Integer beitragGesamt = versicherungen.stream().map(toBeitrag).reduce(VersicherungFunction.SUM).get();
-		// formatter:on
+		// @formatter:on
 
 		assertEquals(new Integer(832), beitragGesamt);
 	}
@@ -47,9 +48,21 @@ public class VersicherungenCurryTest {
 		versicherungen.add(new Versicherung2(1024));
 		versicherungen.add(new Versicherung2(1048));
 
-		// formatter:off
-		Integer beitragGesamt = null;
-		// formatter:on
+		// @formatter:off
+		Function<Integer, Integer> toBeitrag = VersicherungFunction
+				.beitragsrechnungExtended
+				.curry()
+				.apply(versicherungen.size())
+				.curry()
+				.apply(1);
+
+		Integer beitragGesamt = versicherungen
+				.stream()
+				.map(Versicherung2::getBeitragJahr)
+				.map(toBeitrag)
+				.reduce(VersicherungFunction.SUM)
+				.get();
+		// @formatter:on
 
 		assertEquals(new Integer(2076), beitragGesamt);
 	}
@@ -66,11 +79,49 @@ public class VersicherungenCurryTest {
 		versicherungen.add(new Versicherung2(1024));
 		versicherungen.add(new Versicherung2(1048));
 
-		// formatter:off
-		Integer beitragGesamt = null;
-		// formatter:on
+		// @formatter:off
+		Function<Integer, Integer> toBeitrag = VersicherungFunction
+				.beitragsrechnungExtended
+				.curry()
+				.apply(versicherungen.size())
+				.curry()
+				.apply(1);
+
+		Integer beitragGesamt = versicherungen
+				.stream()
+				.map(Versicherung2::getBeitragJahr)
+				.map(VersicherungFunction.beitragskorrketur)
+				.map(toBeitrag)
+				.reduce(VersicherungFunction.SUM)
+				.get();
+		// @formatter:on
 
 		assertEquals(new Integer(2068), beitragGesamt);
+	}
+
+	@Test
+	public void testGetVersicherungBeitragMonatExtended() {
+		List<Versicherung> versicherungen = new ArrayList<>();
+		versicherungen.add(new Versicherung(23));
+		versicherungen.add(new Versicherung(46));
+
+		// @formatter:off
+		Function<Integer, Integer> toBeitrag = VersicherungFunction
+				.beitragsrechnungExtended
+				.curry()
+				.apply(versicherungen.size())
+				.curry()
+				.apply(12);
+		
+		Integer beitragGesamt = versicherungen
+				.stream()
+				.map(Versicherung::getBeitragMonat)
+				.map(toBeitrag)
+				.reduce(VersicherungFunction.SUM)
+				.get();
+		// @formatter:on
+
+		assertEquals(new Integer(832), beitragGesamt);
 	}
 
 }

@@ -16,4 +16,8 @@ public interface TriFunction<A, B, C, R> {
 	default Function<A, ExtendedFunction<B, C, R>> curry() {
 		return a -> (b, c) -> this.apply(a, b, c);
 	}
+
+	default ExtendedFunction<B, C, R> curryWith(A value) {
+		return curry().apply(value);
+	}
 }

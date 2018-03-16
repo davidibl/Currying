@@ -15,11 +15,12 @@ public class VersicherungenCurryTest {
 
 	/**
 	 * Schreibt eine Funktion in VersicherungFunction, die die Methode
-	 * getVersicherungsbeitrag derart modifiziert, dass eine partielle Applikation
-	 * mit der Anzahl der Versicherungen stattfinden kann. Das Resultat der Partial
-	 * Application soll dann in Map verwendet werden um schlußendlich die
-	 * Beitragssummer zu berechnen. Die Function zur partiellen Applikation soll
-	 * vollkommen wiederverwendbar (generisch) sein und curry heißen.
+	 * getVersicherungsbeitrag derart modifiziert, dass eine partielle
+	 * Applikation mit der Anzahl der Versicherungen stattfinden kann. Das
+	 * Resultat der Partial Application soll dann in Map verwendet werden um
+	 * schlußendlich die Beitragssummer zu berechnen. Die Function zur
+	 * partiellen Applikation soll vollkommen wiederverwendbar (generisch) sein
+	 * und curry heißen.
 	 */
 	@Test
 	public void testGetVersicherungBeitrag() {
@@ -27,8 +28,8 @@ public class VersicherungenCurryTest {
 		versicherungen.add(new Versicherung(23));
 		versicherungen.add(new Versicherung(46));
 
-		Function<Versicherung, Integer> toBeitrag = VersicherungFunction.beitragsrechnung.curry()
-				.apply(versicherungen.size());
+		Function<Versicherung, Integer> toBeitrag = VersicherungFunction.beitragsrechnung
+				.curryWith(versicherungen.size());
 
 		// @formatter:off
 		Integer beitragGesamt = versicherungen.stream().map(toBeitrag).reduce(VersicherungFunction.SUM).get();
@@ -40,7 +41,8 @@ public class VersicherungenCurryTest {
 	/**
 	 * Eine zweite Versicherung enthält keinen Monatsbeitrag sondern nur den
 	 * Jahresbeitrag. Erweitert den Algorithmus dahingehend dass hier keine
-	 * Multiplikation mit 12 mehr stattfinden. Optimiert den Code soweit als möglich
+	 * Multiplikation mit 12 mehr stattfinden. Optimiert den Code soweit als
+	 * möglich
 	 */
 	@Test
 	public void testGetVersicherungBeitrag2() {
@@ -51,10 +53,8 @@ public class VersicherungenCurryTest {
 		// @formatter:off
 		Function<Integer, Integer> toBeitrag = VersicherungFunction
 				.beitragsrechnungExtended
-				.curry()
-				.apply(versicherungen.size())
-				.curry()
-				.apply(1);
+				.curryWith(versicherungen.size())
+				.curryWith(1);
 
 		Integer beitragGesamt = versicherungen
 				.stream()
@@ -68,10 +68,10 @@ public class VersicherungenCurryTest {
 	}
 
 	/**
-	 * Es stellt sich heraus dass eine Beitragskorrektur um 4 Euro nach unten bei
-	 * den Jahresbeiträgen stattfinden muss. Entwickelt den Algorithmus dahingehend
-	 * weiter dass die Korrektur ohne Änderung auf beide Versicherungstypen
-	 * angewendet werden kann.
+	 * Es stellt sich heraus dass eine Beitragskorrektur um 4 Euro nach unten
+	 * bei den Jahresbeiträgen stattfinden muss. Entwickelt den Algorithmus
+	 * dahingehend weiter dass die Korrektur ohne Änderung auf beide
+	 * Versicherungstypen angewendet werden kann.
 	 */
 	@Test
 	public void testBeitragskorrektur() {
@@ -82,10 +82,8 @@ public class VersicherungenCurryTest {
 		// @formatter:off
 		Function<Integer, Integer> toBeitrag = VersicherungFunction
 				.beitragsrechnungExtended
-				.curry()
-				.apply(versicherungen.size())
-				.curry()
-				.apply(1);
+				.curryWith(versicherungen.size())
+				.curryWith(1);
 
 		Integer beitragGesamt = versicherungen
 				.stream()
@@ -108,11 +106,9 @@ public class VersicherungenCurryTest {
 		// @formatter:off
 		Function<Integer, Integer> toBeitrag = VersicherungFunction
 				.beitragsrechnungExtended
-				.curry()
-				.apply(versicherungen.size())
-				.curry()
-				.apply(12);
-		
+				.curryWith(versicherungen.size())
+				.curryWith(12);
+
 		Integer beitragGesamt = versicherungen
 				.stream()
 				.map(Versicherung::getBeitragMonat)

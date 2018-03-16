@@ -43,7 +43,7 @@ public class Gehaltsrechner {
 		return bd.doubleValue();
 	};
 
-	private static Function<Double, Double> ROUND_DEFAULT = ROUND.curry().apply(2);
+	private static Function<Double, Double> ROUND_DEFAULT = ROUND.curryWith(2);
 
 	private int getLimit() {
 		return (limit == null) ? regeln.size() : limit;

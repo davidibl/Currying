@@ -16,14 +16,14 @@ public class ValueConverterTest {
 	 */
 	@Test
 	public void testValueConvertingEuroDollar() {
-		Function<Double, Double> euroDollarConverter = Converter.CONVERT.curry().apply(2.51); // Converter.base(2.51);
+		Function<Double, Double> euroDollarConverter = Converter.CONVERT.curryWith(2.51); // Converter.base(2.51);
 
 		assertEquals(new Double(5.02), euroDollarConverter.apply(2.0));
 	}
 
 	@Test
 	public void testValueConvertingDollarEuro() {
-		Function<Double, Double> dollarEuroConverter = Converter.CONVERT.curry().apply(0.76);
+		Function<Double, Double> dollarEuroConverter = Converter.CONVERT.curryWith(0.76);
 		; // Converter.base(0.76);
 
 		assertEquals(new Double(1.52), dollarEuroConverter.apply(2.0));

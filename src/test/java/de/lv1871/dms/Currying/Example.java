@@ -12,10 +12,15 @@ public class Example {
 	private static BiFunction<Integer, Integer, Integer> ADD = (a, b) -> a + b;
 	private static Function<Integer, Function<Integer, Integer>> ADD_NUMBER = a -> b -> ADD.apply(a, b);
 	private static Function<Integer, Integer> ADD5 = ADD_NUMBER.apply(5);
+	private static Function<Integer, Integer> ADD7 = ADD_NUMBER.apply(7);
 
 	@Test
 	public void testAdd5() {
 		assertEquals(new Integer(7), ADD5.apply(2));
 	}
 
+	@Test
+	public void testAdd5AndThenAdd7() {
+		assertEquals(new Integer(14), ADD5.andThen(ADD7).apply(2));
+	}
 }
